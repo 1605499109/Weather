@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/flexble.js"></script>
+    <!-- index.css -->
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css">
+    <!-- 引入axios -->
+    <script src="./js/axios.js"></script>
+    <!-- 引入swiper -->
+    <script src="./js/swiper.js"></script>
+    <script src="./js/get.js"></script>
+    <script src="./js/art-template.js"></script>
+    <title>天气</title>
+</head>
+
+<body>
+    <div>
+        <!-- <img src="./imgs/大雨.png" alt="" class="logo"> -->
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                <!-- <div class="swiper-slide">
+                    <div class="swipwer-left">
+                        <h2>16°</h2>
+                        <div>CHIFENG</div>
+                    </div>
+                    <div class="swiper-right">
+                        <div>风向</div>
+                        <div class="quality">14km/h</div>
+                        <div>空气质量</div>
+                        <div class="quality">30%</div>
+                        <div>降水量</div>
+                        <div class="quality">5mm</div> -->
+            </div>
+
+
+
+            <script id="swiperData" type="text/html">
+
+
+                {{each data}}
+                <div class="swiper-slide">
+
+                                        
+
+                                <img src={{if $value.text_day==='小雨'}}./imgs/大雨.png{{}}{{else if $value.text_day==='阴'}}
+                                ./imgs/太阳.png
+                                {{/if}}   alt="" class="logo">
+                                <div class="swipwer-left">
+                                    <h2>{{$value.low}}°</h2>
+                                    <div>{{location.name}}</div>
+                                </div>
+                                <div class="swiper-right">
+                                    <div>风速</div>
+                                    <div class="quality">{{$value.wind_speed}}km/h</div>
+                                    <div>最高温度</div>
+                                    <div class="quality">{{$value.high}}°</div>
+                                    <div>降水量</div>
+                                    <div class="quality">{{$value.wind_scale}}mm</div>
+                                </div>
+                            </div>
+                                {{/each}}
+                             </script>
+        </div>
+    </div>
+    </div>
+
+    <div> <span class="aircraft"></span>
+        <div class="table"></div>
+        <script id="table" type="text/html">
+            {{each data}}
+            <table >
+
+                <head>
+                    <tr>
+                        <td>当天最高温度</td>
+                        <td>降水概率</td>
+                        <td>风向</td>
+                        <td>相对湿度</td>
+                        <td>风力等级</td>
+                    </tr>
+                </head>
+                <tbody>
+                    <tr>
+                        <td>{{$value.high}}°</td>
+                        <td>{{$value.precip}}%</td>
+                        <td>{{$value.wind_direction}}</td>
+                        <td>{{$value.humidity}}%</td>
+                        <td>{{$value.rainfall}}级</td>
+                    </tr>
+                    <tr></tr>
+    
+    
+    
+                </tbody>
+            </table>
+            {{/each}}
+        </script>
+     
+
+
+
+        
+    </div>
+    <div class="footer">
+
+        <!-- <div class="paging">
+            <div>四月</div>
+            <div>1</div>
+            <div>星期一</div>
+        </div>
+        <div>
+
+            <div> <img class="address" src="../天气/imgs/地图-地标.png"></img> 赤峰</div>
+            <div>星期二</div>
+            <div>星期三</div>
+        </div> -->
+        <script id="paging" type="text/html">
+            <div class="paging">
+                <div>{{data[0].date}}</div>
+                <div>{{m}}月</div>
+                <div>星期{{day}}</div>
+            </div>
+            <div>
+    
+                <div> <img class="address" src="../天气/imgs/地图-地标.png"></img> {{location.name}}</div>
+            </div>
+        </script>
+    </div>
+
+
+    <script>
+
+        var data = ''
+        async function reader() {
+            let res = await getweater()
+
+            let data = res.data.results[0].daily
+            let location = res.data.results[0].location
+            console.log(data);
+            // console.log(res.data.results[0].daily);
+            // console.log(data);
+            let p = template('swiperData', { data: data, location: location })
+            // console.log(p);
+            document.querySelector('.swiper-wrapper').innerHTML = p
+
+            let time = template('paging', { data: data, location: location, })
+            // document.querySelector('.footer').innerHTML = time
+            console.log(time);
+            let table =template('table',{data:data})
+            // console.log(table);
+            document.querySelector('.table').innerHTML=table
+
+        }
+        reader()
+
+
+        var mySwiper = new Swiper('.swiper', {
+
+            loop: true, // 循环模式选项
+        })        
+    </script>
+
+
+
+</body>
+
+</html>
